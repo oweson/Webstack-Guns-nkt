@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 1997
 
 guns:
   swagger-open: true              #是否开启swagger (true/false)
@@ -8,6 +8,7 @@ guns:
   spring-session-open: false      #是否开启spring session,如果是多机环境需要开启(true/false)
   session-invalidate-time: 1800     #session失效时间(只在单机环境下生效，多机环境在SpringSessionConfig类中配置) 单位：秒
   session-validation-interval: 900  #多久检测一次失效的session(只在单机环境下生效) 单位：秒
+  flag: true # 是否打开自动监控机制
 
 beetl:
   resource-auto-check: true       #热加载beetl模板，开发时候用
@@ -37,9 +38,9 @@ log:
 
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1/webstack?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
+    url: jdbc:mysql://139.224.35.86:3306/webstack?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
     username: root
-    password: root
+    password: df-21
     filters: wall,mergeStat
 
 

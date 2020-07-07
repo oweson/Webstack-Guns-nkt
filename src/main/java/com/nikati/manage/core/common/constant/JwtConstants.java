@@ -26,8 +26,10 @@ public interface JwtConstants {
     String AUTH_HEADER = "Authorization";
 
     String SECRET = "defaultSecret";
+    // 过期时间的配置，估计应该是s
+//    Long EXPIRATION = 604800L;
+    Long EXPIRATION = 604800000L;
 
-    Long EXPIRATION = 604800L;
 
     String AUTH_PATH = "/gunsApi/auth";
 
