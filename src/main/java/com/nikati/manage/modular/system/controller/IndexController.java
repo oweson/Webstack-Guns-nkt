@@ -17,9 +17,14 @@ package com.nikati.manage.modular.system.controller;
 
 import cn.stylefeng.roses.core.base.controller.BaseController;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -37,50 +42,69 @@ import java.util.List;
  * @Date 2019/7/25 21:23 首页控制器
  */
 @Controller
+@CacheConfig(cacheNames = "index")
+@Slf4j
 public class IndexController extends BaseController {
+    // 1 标题
+    public static final String CACHE_INDEX_TITLES = "index_titles";
+    // 2 分类
+    public static final String CACHE_CATEGORY = "index_categorys";
 
-	@Autowired
-	private CategoryServiceImpl categoryService;
+    @Autowired
+    private CategoryServiceImpl categoryService;
 
-	/**
-	 * 跳转到首页
-	 */
-	@RequestMapping("/")
-	public String index(Model model) {
-		List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
-		List<MenuNode> titles = MenuNode.buildTitle(menus);
-		List<Category> categorySiteList = categoryService.getCatogrySite(null);
-		model.addAttribute("categorySiteList", categorySiteList);
-		model.addAttribute("titles", titles);
-		System.out.println(titles + "s");
-		return "/index.html";
-	}
+    @Autowired
+    private RedisTemplate redisTemplate;
 
-	@RequestMapping("/search/{wd}")
-	public String s(Model model, @PathVariable(value = "wd") String wd) {
-		HashMap<String, Object> map = new HashMap<>();
-		map.put("title", wd);
-		List<MenuNode> menus = categoryService.getCatogryNode(map);
-		List<MenuNode> titles = MenuNode.buildTitle(menus);
-		List<Category> categorySiteList = categoryService.getCatogrySiteByinfo(map);
-		List<Category> resultList = new ArrayList<Category>();
-		for (Category category : categorySiteList) {
-			if (null != category.getSites() && category.getSites().size() != 0) {
-				resultList.add(category);
-			}
-		}
-		model.addAttribute("categorySiteList", resultList);
-		model.addAttribute("titles", titles);
-		System.out.println(titles);
-		return "/index.html";
-	}
 
-	/**
-	 * 跳转到关于页面
-	 */
-	@RequestMapping("/about")
-	public String about(Model model) {
-		return "/about.html";
-	}
+    /**
+     * 1 跳转到首页
+     */
+    @RequestMapping("/")
+    public String index(Model model) {
+        //
+        List<MenuNode> titles = null;
+        List<Category> categorySiteList = null;
+            titles = redisTemplate.opsForList().range(CACHE_CATEGORY, 0, -1);
+            categorySiteList = redisTemplate.opsForList().range(CACHE_INDEX_TITLES, 0, -1);
+        if (CollectionUtils.isEmpty(titles) || CollectionUtils.isEmpty(categorySiteList)) {
+            List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
+            titles = MenuNode.buildTitle(menus);
+            redisTemplate.opsForList().leftPushAll(CACHE_CATEGORY,titles);
+            // 处理分类目录
+            categorySiteList = categoryService.getCatogrySite(null);
+            redisTemplate.opsForList().leftPushAll(CACHE_INDEX_TITLES,categorySiteList);
+        }
+        model.addAttribute("categorySiteList", categorySiteList);
+        model.addAttribute("titles", titles);
+        return "/index.html";
+    }
+
+    @RequestMapping("/search/{wd}")
+    public String s(Model model, @PathVariable(value = "wd") String wd) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("title", wd);
+        List<MenuNode> menus = categoryService.getCatogryNode(map);
+        List<MenuNode> titles = MenuNode.buildTitle(menus);
+        List<Category> categorySiteList = categoryService.getCatogrySiteByinfo(map);
+        List<Category> resultList = new ArrayList<Category>();
+        for (Category category : categorySiteList) {
+            if (null != category.getSites() && category.getSites().size() != 0) {
+                resultList.add(category);
+            }
+        }
+        model.addAttribute("categorySiteList", resultList);
+        model.addAttribute("titles", titles);
+        System.out.println(titles);
+        return "/index.html";
+    }
+
+    /**
+     * 跳转到关于页面
+     */
+    @RequestMapping("/about")
+    public String about(Model model) {
+        return "/about.html";
+    }
 
 }

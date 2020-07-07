@@ -42,6 +42,18 @@ spring:
     username: root
     password: df-21
     filters: wall,mergeStat
+  redis:
+    database: 1
+    host: 139.224.35.86
+    password: df-21
+    jedis:
+      pool:
+        max-active: 10
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+    timeout: 8000
+    port: 6379
 
 
 

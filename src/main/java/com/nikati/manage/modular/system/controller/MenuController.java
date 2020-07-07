@@ -33,8 +33,14 @@ import com.nikati.manage.core.log.LogObjectHolder;
 import com.nikati.manage.modular.system.model.Menu;
 import com.nikati.manage.modular.system.service.IMenuService;
 import com.nikati.manage.modular.system.warpper.MenuWarpper;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -55,6 +61,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/menu")
+@CacheConfig(cacheNames = "menu")
 public class MenuController extends BaseController {
 
     private static String PREFIX = "/system/menu/";
@@ -116,6 +123,7 @@ public class MenuController extends BaseController {
     @RequestMapping(value = "/edit")
     @BussinessLog(value = "修改菜单", key = "name", dict = MenuDict.class)
     @ResponseBody
+    @CacheEvict(allEntries = true)
     public ResponseData edit(@Valid Menu menu, BindingResult result) {
         if (result.hasErrors()) {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);
@@ -129,7 +137,9 @@ public class MenuController extends BaseController {
 
     /**
      * 获取菜单列表
+     *
      */
+    @Cacheable(key = "'dept-list'")
     @Permission(Const.ADMIN_NAME)
     @RequestMapping(value = "/list")
     @ResponseBody
@@ -145,20 +155,18 @@ public class MenuController extends BaseController {
     @RequestMapping(value = "/add")
     @BussinessLog(value = "菜单新增", key = "name", dict = MenuDict.class)
     @ResponseBody
+    @CacheEvict(allEntries = true)
     public ResponseData add(@Valid Menu menu, BindingResult result) {
         if (result.hasErrors()) {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);
         }
-
         //判断是否存在该编号
         String existedMenuName = ConstantFactory.me().getMenuNameByCode(menu.getCode());
         if (ToolUtil.isNotEmpty(existedMenuName)) {
             throw new ServiceException(BizExceptionEnum.EXISTED_THE_MENU);
         }
-
         //设置父级菜单编号
         menuSetPcode(menu);
-
         menu.setStatus(MenuStatus.ENABLE.getCode());
         this.menuService.insert(menu);
         return SUCCESS_TIP;
@@ -171,6 +179,7 @@ public class MenuController extends BaseController {
     @RequestMapping(value = "/remove")
     @BussinessLog(value = "删除菜单", key = "menuId", dict = MenuDict.class)
     @ResponseBody
+    @CacheEvict(allEntries = true)
     public ResponseData remove(@RequestParam Long menuId) {
         if (ToolUtil.isEmpty(menuId)) {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);
@@ -188,6 +197,7 @@ public class MenuController extends BaseController {
      */
     @RequestMapping(value = "/view/{menuId}")
     @ResponseBody
+    @Cacheable(key = "'menu-one-'+ #p0")
     public ResponseData view(@PathVariable Long menuId) {
         if (ToolUtil.isEmpty(menuId)) {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);
@@ -201,6 +211,7 @@ public class MenuController extends BaseController {
      */
     @RequestMapping(value = "/menuTreeList")
     @ResponseBody
+    @Cacheable(key = "'menu-all'")
     public List<ZTreeNode> menuTreeList() {
         return this.menuService.menuTreeList();
     }
@@ -210,6 +221,7 @@ public class MenuController extends BaseController {
      */
     @RequestMapping(value = "/selectMenuTreeList")
     @ResponseBody
+    @Cacheable(key = "'menu-parent'")
     public List<ZTreeNode> selectMenuTreeList() {
         List<ZTreeNode> roleTreeList = this.menuService.menuTreeList();
         roleTreeList.add(ZTreeNode.createParent());
@@ -221,6 +233,7 @@ public class MenuController extends BaseController {
      */
     @RequestMapping(value = "/menuTreeListByRoleId/{roleId}")
     @ResponseBody
+    @Cacheable(key = "'menu-role-list'")
     public List<ZTreeNode> menuTreeListByRoleId(@PathVariable Integer roleId) {
         List<Long> menuIds = this.menuService.getMenuIdsByRoleId(roleId);
         if (ToolUtil.isEmpty(menuIds)) {

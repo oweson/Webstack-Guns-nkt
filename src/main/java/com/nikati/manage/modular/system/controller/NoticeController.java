@@ -20,6 +20,9 @@ import cn.stylefeng.roses.core.util.ToolUtil;
 import cn.stylefeng.roses.kernel.model.exception.ServiceException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,6 +52,7 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/notice")
+@CacheConfig(cacheNames = "notices")
 public class NoticeController extends BaseController {
 
     private String PREFIX = "/system/notice/";
@@ -98,6 +102,7 @@ public class NoticeController extends BaseController {
      */
     @RequestMapping(value = "/list")
     @ResponseBody
+    @Cacheable(key = "'notices-all'")
     public Object list(String condition) {
         List<Map<String, Object>> list = this.noticeService.list(condition);
         return super.warpObject(new NoticeWrapper(list));
@@ -109,6 +114,7 @@ public class NoticeController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     @BussinessLog(value = "新增通知", key = "title", dict = NoticeMap.class)
+    @CacheEvict(allEntries = true)
     public Object add(Notice notice) {
         if (ToolUtil.isOneEmpty(notice, notice.getTitle(), notice.getContent())) {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);
@@ -122,6 +128,7 @@ public class NoticeController extends BaseController {
     /**
      * 删除通知
      */
+    @CacheEvict(allEntries = true)
     @RequestMapping(value = "/delete")
     @ResponseBody
     @BussinessLog(value = "删除通知", key = "noticeId", dict = NoticeMap.class)
@@ -141,6 +148,7 @@ public class NoticeController extends BaseController {
     @RequestMapping(value = "/update")
     @ResponseBody
     @BussinessLog(value = "修改通知", key = "title", dict = NoticeMap.class)
+    @CacheEvict(allEntries = true)
     public Object update(Notice notice) {
         if (ToolUtil.isOneEmpty(notice, notice.getId(), notice.getTitle(), notice.getContent())) {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);

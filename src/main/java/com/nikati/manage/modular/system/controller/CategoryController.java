@@ -6,6 +6,8 @@ import cn.stylefeng.roses.core.util.ToolUtil;
 import cn.stylefeng.roses.kernel.model.exception.ServiceException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +23,7 @@ import com.nikati.manage.modular.system.service.impl.CategoryServiceImpl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author fz
@@ -30,14 +33,20 @@ import java.util.Map;
 @Controller
 @RequestMapping("category")
 public class CategoryController extends BaseController {
+    // 1 标题
+    public static final String CACHE_INDEX_TITLES = "index_titles";
+    // 2 分类
+    public static final String CACHE_CATEGORY = "index_categorys";
 
     private static String PREFIX = "/system/site/";
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private CategoryServiceImpl categoryService;
 
     /**
-     * 跳转到菜单列表列表页面
+     * 0 跳转到菜单列表列表页面
      */
     @RequestMapping("")
     public String index() {
@@ -46,7 +55,7 @@ public class CategoryController extends BaseController {
 
 
     /**
-     * 获取分类列表
+     * 1 获取分类列表
      */
     @RequestMapping(value = "/list")
     @ResponseBody
@@ -57,13 +66,12 @@ public class CategoryController extends BaseController {
         return super.warpObject(new BaseControllerWrapper(mapList) {
             @Override
             protected void wrapTheMap(Map<String, Object> map) {
-
             }
         });
     }
 
     /**
-     * 跳转到添加分类
+     * 2 跳转到添加分类
      */
     @RequestMapping("/category_add")
     public String categoryAdd() {
@@ -71,10 +79,11 @@ public class CategoryController extends BaseController {
     }
 
     /**
-     * 跳转到修改分类
+     * 3 跳转到修改分类
      */
     @RequestMapping("/category_update/{id}")
     public String categoryUpdate(@PathVariable Integer id, Model model) {
+        cacheSame();
         Category category = categoryService.get(id);
         model.addAttribute(category);
         int pId = category.getParentId();
@@ -87,7 +96,7 @@ public class CategoryController extends BaseController {
     }
 
     /**
-     * 获取分类的tree列表
+     * 4 获取分类的tree列表
      */
     @RequestMapping(value = "/tree")
     @ResponseBody
@@ -98,11 +107,12 @@ public class CategoryController extends BaseController {
     }
 
     /**
-     * 新增分类
+     * 5 新增分类
      */
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(Category category) {
+        cacheSame();
         int level = category.getParentId() == 0 ? 0 : categoryService.get(category.getParentId()).getLevels();
         category.setLevels(level + 1);
         categoryService.saveOrUpdate(category, "");
@@ -111,11 +121,12 @@ public class CategoryController extends BaseController {
 
 
     /**
-     * 修改分类
+     * 6 修改分类
      */
     @RequestMapping(value = "/update")
     @ResponseBody
     public Object update(Category category) {
+        cacheSame();
         if (ToolUtil.isEmpty(category) || category.getId() == null) {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);
         }
@@ -126,15 +137,21 @@ public class CategoryController extends BaseController {
     }
 
     /**
-     * 删除分类
+     * 7 删除分类
      */
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam Integer id) {
+        cacheSame();
         categoryService.delete(id);
-
         return SUCCESS_TIP;
     }
 
+
+    public void cacheSame() {
+        redisTemplate.expire(CACHE_CATEGORY, 0, TimeUnit.SECONDS);
+        redisTemplate.expire(CACHE_INDEX_TITLES, 0, TimeUnit.SECONDS);
+
+    }
 
 }
