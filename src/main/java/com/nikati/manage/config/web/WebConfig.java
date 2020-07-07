@@ -23,6 +23,7 @@ import com.alibaba.druid.support.spring.stat.BeanTypeAutoProxyCreator;
 import com.alibaba.druid.support.spring.stat.DruidStatInterceptor;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import com.nikati.manage.config.FuckAttacker;
 import com.nikati.manage.config.properties.GunsProperties;
 import com.nikati.manage.core.common.controller.GunsErrorView;
 import com.nikati.manage.core.interceptor.RestApiInteceptor;
@@ -74,6 +75,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new RestApiInteceptor()).addPathPatterns("/gunsApi/**");
+        registry.addInterceptor(new FuckAttacker()).addPathPatterns("/**");
     }
 
     /**
