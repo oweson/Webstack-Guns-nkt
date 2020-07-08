@@ -84,10 +84,10 @@ public class IndexController extends BaseController {
         if (CollectionUtils.isEmpty(titles) || CollectionUtils.isEmpty(categorySiteList)) {
             List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
             titles = MenuNode.buildTitle(menus);
-            redisTemplate.opsForList().leftPushAll(CACHE_CATEGORY, titles);
+            redisTemplate.opsForList().rightPushAll(CACHE_CATEGORY, titles);
             // 处理分类目录
             categorySiteList = categoryService.getCatogrySite(null);
-            redisTemplate.opsForList().leftPushAll(CACHE_INDEX_TITLES, categorySiteList);
+            redisTemplate.opsForList().rightPushAll(CACHE_INDEX_TITLES, categorySiteList);
         }
         model.addAttribute("categorySiteList", categorySiteList);
         model.addAttribute("titles", titles);
