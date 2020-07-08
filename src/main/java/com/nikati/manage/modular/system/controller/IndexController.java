@@ -17,6 +17,8 @@ package com.nikati.manage.modular.system.controller;
 
 import cn.stylefeng.roses.core.base.controller.BaseController;
 
+import com.nikati.manage.core.util.AddressUtils;
+import com.nikati.manage.core.util.IpUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -33,6 +35,7 @@ import com.nikati.manage.modular.system.model.Category;
 import com.nikati.manage.modular.system.service.IOperationLogService;
 import com.nikati.manage.modular.system.service.impl.CategoryServiceImpl;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,24 +59,35 @@ public class IndexController extends BaseController {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    private void countUserDetailMessage(HttpServletRequest request) {
+        int serverPort = request.getServerPort();
+        String ipAddr = IpUtils.getIpAddr(request);
+        String osAndBrowserInfo = IpUtils.getOsAndBrowserInfo(request);
+        ipAddr="222.76.8.158";
+        String queryAddress = AddressUtils.queryAddress(ipAddr);
+        System.out.println("");
+
+    }
 
     /**
      * 1 跳转到首页
      */
     @RequestMapping("/")
-    public String index(Model model) {
+    public String index(Model model,HttpServletRequest httpServletRequest) {
         //
+        System.out.println();
+        countUserDetailMessage(httpServletRequest);
         List<MenuNode> titles = null;
         List<Category> categorySiteList = null;
-            titles = redisTemplate.opsForList().range(CACHE_CATEGORY, 0, -1);
-            categorySiteList = redisTemplate.opsForList().range(CACHE_INDEX_TITLES, 0, -1);
+        titles = redisTemplate.opsForList().range(CACHE_CATEGORY, 0, -1);
+        categorySiteList = redisTemplate.opsForList().range(CACHE_INDEX_TITLES, 0, -1);
         if (CollectionUtils.isEmpty(titles) || CollectionUtils.isEmpty(categorySiteList)) {
             List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
             titles = MenuNode.buildTitle(menus);
-            redisTemplate.opsForList().leftPushAll(CACHE_CATEGORY,titles);
+            redisTemplate.opsForList().leftPushAll(CACHE_CATEGORY, titles);
             // 处理分类目录
             categorySiteList = categoryService.getCatogrySite(null);
-            redisTemplate.opsForList().leftPushAll(CACHE_INDEX_TITLES,categorySiteList);
+            redisTemplate.opsForList().leftPushAll(CACHE_INDEX_TITLES, categorySiteList);
         }
         model.addAttribute("categorySiteList", categorySiteList);
         model.addAttribute("titles", titles);
