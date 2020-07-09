@@ -91,6 +91,9 @@ public class SpringbootApplicatyionTest {
     public void batchSelect(){
         ArrayList<Integer> integers = Lists.newArrayList(1, 2, 3);
         List<Visitor> visitors = visitorMapper.batchSelect(integers);
+        visitors.get(0).setOs("linux");
+        visitors.get(1).setOs("");
+
         visitors.forEach((e)->e.setBrowser("firefox"));
         System.out.println(visitorMapper.batchUpdate(visitors));
     }

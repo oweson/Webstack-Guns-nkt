@@ -65,8 +65,12 @@ select * from visitor  where id=#{id}
     <update id="batchUpdate" parameterType="list">
         <foreach collection="list" separator=";" item="cus">
             update visitor set
+
             ip = #{cus.ip},
-            os = #{cus.os},
+            <if test="cus.os!=null and cus.os!=''">
+                os = #{cus.os},
+            </if>
+
             browser = #{cus.browser},
             address = #{cus.address}
             where id = #{cus.id}
