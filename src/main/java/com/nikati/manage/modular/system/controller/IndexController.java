@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 package com.nikati.manage.modular.system.controller;
+import java.util.Date;
 
 import cn.stylefeng.roses.core.base.controller.BaseController;
 
 import com.nikati.manage.core.util.AddressUtils;
 import com.nikati.manage.core.util.IpUtils;
+import com.nikati.manage.modular.system.dao.VisitorMapper;
+import com.nikati.manage.modular.system.model.Visitor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -54,6 +57,9 @@ public class IndexController extends BaseController {
     public static final String CACHE_CATEGORY = "index_categorys";
 
     @Autowired
+    private VisitorMapper visitorMapper;
+
+    @Autowired
     private CategoryServiceImpl categoryService;
 
     @Autowired
@@ -62,11 +68,19 @@ public class IndexController extends BaseController {
     private void countUserDetailMessage(HttpServletRequest request) {
         int serverPort = request.getServerPort();
         String ipAddr = IpUtils.getIpAddr(request);
-        String osAndBrowserInfo = IpUtils.getOsAndBrowserInfo(request);
+        List<String> osAndBrowserInfo = IpUtils.getOsAndBrowserInfo(request);
+        String osName = osAndBrowserInfo.get(0);
+        String bronsor = osAndBrowserInfo.get(1);
         ipAddr="222.76.8.158";
         String queryAddress = AddressUtils.queryAddress(ipAddr);
         System.out.println("");
-
+        Visitor visitor = new Visitor();
+        visitor.setIp(ipAddr);
+        visitor.setOs(osName);
+        visitor.setBrowser(bronsor);
+        visitor.setAddress(queryAddress);
+        visitor.setCreate_time(new Date());
+        visitorMapper.insertSelective(visitor);
     }
 
     /**
@@ -74,7 +88,6 @@ public class IndexController extends BaseController {
      */
     @RequestMapping("/")
     public String index(Model model,HttpServletRequest httpServletRequest) {
-        //
         System.out.println();
         countUserDetailMessage(httpServletRequest);
         List<MenuNode> titles = null;

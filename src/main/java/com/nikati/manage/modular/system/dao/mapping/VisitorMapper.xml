@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nikati.manage.modular.system.dao.VisitorMapper">
+
+    <select id="selectByPrimaryKey" resultType="com.nikati.manage.modular.system.model.Visitor"
+            parameterType="java.lang.Integer">
+
+select * from visitor  where id=#{id}
+
+    </select>
+
+
+    <select id="getList" resultType="com.nikati.manage.modular.system.model.Visitor" parameterType="map">
+        select * from visitor
+    </select>
+
+    <select id="getTotalCount" resultType="java.lang.Integer" parameterType="map">
+        select count(1)
+        from visitor
+
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from visitor where id = #{id}
+	</delete>
+
+
+    <insert id="insertSelective" parameterType="com.nikati.manage.modular.system.model.Site" useGeneratedKeys="true"
+            keyProperty="id">
+        <!-- private Integer id;
+            private String ip;
+            private String os;
+            private String browser;
+            private String address;-->
+        insert into visitor
+        <set>
+            <if test="id != null">id=#{id},</if>
+            <if test="ip != null">ip=#{ip},</if>
+            <if test="os != null">os=#{os},</if>
+            <if test="browser != null">browser=#{browser},</if>
+            <if test="address != null">address=#{address},</if>
+            create_time=now()
+        </set>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.nikati.manage.modular.system.model.Visitor">
+        update visitor
+        <set>
+            <if test="id != null">id=#{id},</if>
+            <if test="ip != null">ip=#{ip},</if>
+            <if test="os != null">os=#{os},</if>
+            <if test="browser != null">browser=#{browser},</if>
+            <if test="address != null">address=#{address}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+</mapper>
