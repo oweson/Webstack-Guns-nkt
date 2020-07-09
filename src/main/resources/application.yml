@@ -41,10 +41,10 @@ log:
 
 spring:
   datasource:
-    url: jdbc:mysql://139.224.35.86:3306/webstack?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
+    url: jdbc:mysql://139.224.35.86:3306/webstack?allowMultiQueries=true&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
     username: root
     password: df-21
-    filters: wall,mergeStat
+   # filters: wall,mergeStat
   redis:
     database: 1
     host: 139.224.35.86

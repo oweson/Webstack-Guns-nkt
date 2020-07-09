@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.nikati.manage.modular.system.dao.VisitorMapper">
+    <!--<foreach collection="list" item="item" index="index" open="(" close=")" separator="," >  
+                       #{item}  
+                </foreach>
+    -->
+    <delete id="deleteBatch" parameterType="java.lang.Integer">
+        delete from visitor where id in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+
+    </delete>
 
     <select id="selectByPrimaryKey" resultType="com.nikati.manage.modular.system.model.Visitor"
             parameterType="java.lang.Integer">
@@ -29,11 +40,6 @@ select * from visitor  where id=#{id}
 
     <insert id="insertSelective" parameterType="com.nikati.manage.modular.system.model.Site" useGeneratedKeys="true"
             keyProperty="id">
-        <!-- private Integer id;
-            private String ip;
-            private String os;
-            private String browser;
-            private String address;-->
         insert into visitor
         <set>
             <if test="id != null">id=#{id},</if>
@@ -45,7 +51,36 @@ select * from visitor  where id=#{id}
         </set>
     </insert>
 
-    <update id="updateByPrimaryKeySelective" parameterType="com.nikati.manage.modular.system.model.Visitor">
+
+
+    <insert id="batchInsert" parameterType="list"  >
+            insert into visitor(ip,os,browser,address,create_time) values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            ( #{item.ip}, #{item.os}, #{item.browser},
+            #{item.address}, create_time=now())
+        </foreach>
+    </insert>
+
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" separator=";" item="cus">
+            update visitor set
+            ip = #{cus.ip},
+            os = #{cus.os},
+            browser = #{cus.browser},
+            address = #{cus.address}
+            where id = #{cus.id}
+        </foreach>
+
+    </update>
+    <select id="batchSelect" resultType="com.nikati.manage.modular.system.model.Visitor"  >
+        select * from visitor where id in
+        <foreach collection="ids" item="dramaId" open="(" close=")" separator=",">
+            #{dramaId}
+        </foreach>
+    </select>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.nikati.manage.modular.system.model.Visitor" >
         update visitor
         <set>
             <if test="id != null">id=#{id},</if>

@@ -1,6 +1,9 @@
 package com.nikati.manage.config;
 
 import java.util.Date;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.nikati.manage.modular.system.dao.VisitorMapper;
 import com.nikati.manage.modular.system.model.Visitor;
@@ -30,9 +33,16 @@ public class AutoDeleteUselessWebsite {
 //         }
 //
 //    }
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "*/15 * * * * ?")
     public void bigDataInsertMysql() {
-        for (int i = 0; i < 100; i++) {
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        for (int i = 0; i < 3; i++) {
+            executorService.submit(()->task());
+        }
+
+    }
+    private void task(){
+        for (int i = 0; i < 1000; i++) {
             Visitor visitor = new Visitor();
             visitor.setIp("127.0.0.1");
             visitor.setOs("linux");
@@ -41,6 +51,7 @@ public class AutoDeleteUselessWebsite {
             visitor.setCreate_time(new Date());
             visitorMapper.insertSelective(visitor);
         }
+
     }
 
 }

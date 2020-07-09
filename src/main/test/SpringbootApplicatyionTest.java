@@ -1,5 +1,10 @@
 
-import java.util.Date;import com.nikati.manage.WebstackGunsApplication;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+import com.nikati.manage.WebstackGunsApplication;
 import com.nikati.manage.modular.system.dao.VisitorMapper;
 import com.nikati.manage.modular.system.model.Visitor;
 import org.junit.Test;
@@ -50,6 +55,44 @@ public class SpringbootApplicatyionTest {
         int i = visitorMapper.insertSelective(visitor);
 
 
+    }
+
+    @Test
+    @Transactional
+    public void deleteBatch(){
+        Integer[] ids = {1,2,3};
+        visitorMapper.deleteBatch(ids);
+    }
+
+    @Test
+    @Transactional
+    public void saveBatch(){
+        ArrayList<Visitor> visitors = Lists.newArrayList();
+        Visitor visitor = new Visitor();
+        visitor.setIp("1");
+        visitor.setOs("1");
+        visitor.setBrowser("1");
+        visitor.setAddress("1");
+        visitor.setCreate_time(new Date());
+        Visitor visitor2 = new Visitor();
+        visitor2.setIp("2");
+        visitor2.setOs("2");
+        visitor2.setBrowser("2");
+        visitor2.setAddress("2");
+        visitor2.setCreate_time(new Date());
+        visitors.add(visitor);
+        visitors.add(visitor2);
+        System.out.println(visitorMapper.batchInsert(visitors));
+
+
+    }
+
+    @Test
+    public void batchSelect(){
+        ArrayList<Integer> integers = Lists.newArrayList(1, 2, 3);
+        List<Visitor> visitors = visitorMapper.batchSelect(integers);
+        visitors.forEach((e)->e.setBrowser("firefox"));
+        System.out.println(visitorMapper.batchUpdate(visitors));
     }
 
 
