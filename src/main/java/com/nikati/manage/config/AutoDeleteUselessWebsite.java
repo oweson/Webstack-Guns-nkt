@@ -33,25 +33,25 @@ public class AutoDeleteUselessWebsite {
 //         }
 //
 //    }
-    @Scheduled(cron = "*/15 * * * * ?")
-    public void bigDataInsertMysql() {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        for (int i = 0; i < 3; i++) {
-            executorService.submit(()->task());
-        }
-
-    }
-    private void task(){
-        for (int i = 0; i < 1000; i++) {
-            Visitor visitor = new Visitor();
-            visitor.setIp("127.0.0.1");
-            visitor.setOs("linux");
-            visitor.setBrowser("google");
-            visitor.setAddress("上海");
-            visitor.setCreate_time(new Date());
-            visitorMapper.insertSelective(visitor);
-        }
-
-    }
+//    @Scheduled(cron = "*/15 * * * * ?")
+//    public void bigDataInsertMysql() {
+//        ExecutorService executorService = Executors.newFixedThreadPool(2);
+//        for (int i = 0; i < 3; i++) {
+//            executorService.submit(()->task());
+//        }
+//
+//    }
+//    private void task(){
+//        for (int i = 0; i < 1000; i++) {
+//            Visitor visitor = new Visitor();
+//            visitor.setIp("127.0.0.1");
+//            visitor.setOs("linux");
+//            visitor.setBrowser("google");
+//            visitor.setAddress("上海");
+//            visitor.setCreate_time(new Date());
+//            visitorMapper.insertSelective(visitor);
+//        }
+//
+//    }
 
 }
