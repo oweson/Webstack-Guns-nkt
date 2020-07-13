@@ -1,10 +1,12 @@
 package com.nikati.manage.config;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.common.collect.Lists;
 import com.nikati.manage.modular.system.dao.VisitorMapper;
 import com.nikati.manage.modular.system.model.Visitor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,15 +35,16 @@ public class AutoDeleteUselessWebsite {
 //         }
 //
 //    }
-    @Scheduled(cron = "*/15 * * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void bigDataInsertMysql() {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        for (int i = 0; i < 3; i++) {
+        ExecutorService executorService = Executors.newFixedThreadPool(12);
+        for (int i = 0; i < 24; i++) {
             executorService.submit(()->task());
         }
 
     }
     private void task(){
+        ArrayList<Visitor> visitors = Lists.newArrayList(new Visitor());
         for (int i = 0; i < 1000; i++) {
             Visitor visitor = new Visitor();
             visitor.setIp("127.0.0.1");
@@ -49,6 +52,7 @@ public class AutoDeleteUselessWebsite {
             visitor.setBrowser("google");
             visitor.setAddress("上海");
             visitor.setCreate_time(new Date());
+            visitors.add(visitor);
             visitorMapper.insertSelective(visitor);
         }
 
