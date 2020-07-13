@@ -16,6 +16,7 @@ import com.nikati.manage.modular.system.service.impl.CategoryServiceImpl;
 import com.nikati.manage.modular.system.service.impl.SiteServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static com.nikati.manage.modular.system.controller.CategoryController.CACHE_CATEGORY;
+import static com.nikati.manage.modular.system.controller.CategoryController.CACHE_INDEX_TITLES;
 
 /**
  * @Author fz
@@ -43,6 +48,13 @@ public class SiteController extends BaseController {
 
     @Autowired
     private CategoryServiceImpl categoryService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    public void cacheSame() {
+        redisTemplate.expire(CACHE_CATEGORY, 0, TimeUnit.SECONDS);
+        redisTemplate.expire(CACHE_INDEX_TITLES, 0, TimeUnit.SECONDS);
+
+    }
 
     /**
      * 跳转到菜单列表列表页面
@@ -103,6 +115,7 @@ public class SiteController extends BaseController {
     @RequestMapping(value = "/add")
     @ResponseBody
     public Object add(Site site) {
+        cacheSame();
         siteService.saveOrUpdate(site,"");
         return SUCCESS_TIP;
     }
@@ -117,6 +130,7 @@ public class SiteController extends BaseController {
         if (ToolUtil.isEmpty(site) || site.getId() == null) {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);
         }
+        cacheSame();
         siteService.saveOrUpdate(site,site.getId());
         return SUCCESS_TIP;
     }
@@ -127,6 +141,7 @@ public class SiteController extends BaseController {
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam Integer id) {
+        cacheSame();
         siteService.delete(id);
         return SUCCESS_TIP;
     }

@@ -96,6 +96,7 @@ public class IndexController extends BaseController {
         categorySiteList = redisTemplate.opsForList().range(CACHE_INDEX_TITLES, 0, -1);
         if (CollectionUtils.isEmpty(titles) || CollectionUtils.isEmpty(categorySiteList)) {
             List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
+
             titles = MenuNode.buildTitle(menus);
             redisTemplate.opsForList().rightPushAll(CACHE_CATEGORY, titles);
             // 处理分类目录
@@ -106,6 +107,7 @@ public class IndexController extends BaseController {
         model.addAttribute("titles", titles);
         return "/index.html";
     }
+
 
     @RequestMapping("/search/{wd}")
     public String s(Model model, @PathVariable(value = "wd") String wd) {

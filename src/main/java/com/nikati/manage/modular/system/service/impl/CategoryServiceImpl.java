@@ -85,7 +85,7 @@ public class CategoryServiceImpl extends BaseService<Category> {
         for (Category category : categoryList) {
             List<Site> sites = new ArrayList<>();
             for (Site site : siteList) {
-                if (site.getCategoryId() == category.getId()) {
+                if (site.getCategoryId() .equals( category.getId())) {
                     sites.add(site);
                 }
             }
