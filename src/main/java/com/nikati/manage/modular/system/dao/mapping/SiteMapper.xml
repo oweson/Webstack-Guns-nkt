@@ -3,6 +3,17 @@
 
 <mapper namespace="com.nikati.manage.modular.system.dao.SiteMapper">
 
+    <update id="batchUpdate" parameterType="list">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update site
+            <set>
+                state=0
+            </set>
+            where id = ${item.id}
+        </foreach>
+
+    </update>
+
     <select id="selectByPrimaryKey" resultType="com.nikati.manage.modular.system.model.Site" parameterType="java.lang.Integer">
         select s.*,c.title categoryTitle
         from site s left join category c on s.category_id = c.id
@@ -13,7 +24,7 @@
     <select id="getList" resultType="com.nikati.manage.modular.system.model.Site" parameterType="map">
         select s.*,c.title categoryTitle
         from site s left join category c on s.category_id = c.id
-        where 1=1
+        where 1=1 and s.state=1
         <if test="title != null and title != ''">
             and s.title like CONCAT('%',#{title},'%')
         </if>

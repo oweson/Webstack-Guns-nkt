@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class Site {
+    private Integer state;
     private Integer id;
 
     private Integer categoryId;
