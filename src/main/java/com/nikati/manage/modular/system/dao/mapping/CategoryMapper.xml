@@ -3,14 +3,16 @@
 
 <mapper namespace="com.nikati.manage.modular.system.dao.CategoryMapper">
 
-    <select id="selectByPrimaryKey" resultType="com.nikati.manage.modular.system.model.Category" parameterType="java.lang.Integer">
+    <select id="selectByPrimaryKey" resultType="com.nikati.manage.modular.system.model.Category"
+            parameterType="java.lang.Integer">
         select
         id,title,sort,icon,create_time createTime,parent_id parentId,levels
         from category
         where id = #{id}
     </select>
 
-    <select id="getParentTitleById" resultType="com.nikati.manage.modular.system.model.Category" parameterType="java.lang.Integer">
+    <select id="getParentTitleById" resultType="com.nikati.manage.modular.system.model.Category"
+            parameterType="java.lang.Integer">
         select title
         from category
         where id = (select parent_id from category where id = #{id})
@@ -20,10 +22,12 @@
         select
         id,title,sort,icon,create_time createTime,parent_id parentId,levels
         from category
-        where 1=1
-        <if test="title != null and title != ''">
-            and title like CONCAT('%',#{title},'%')
-        </if>
+        <where>
+            <if test="title!=null and title !=''">
+                and title like concat('%',#{title},'%')
+            </if>
+        </where>
+
     </select>
 
     <select id="getList" resultType="com.nikati.manage.modular.system.model.Category" parameterType="map">
@@ -73,6 +77,9 @@
                            'false'
                        END
                    ) as isOpen from category
+    </select>
+    <select id="getListByParentId" resultType="com.nikati.manage.modular.system.model.Category">
+        select * from category where parent_id = #{id}
     </select>
 
     <select id="getCatogryNode" resultType="com.nikati.manage.core.common.node.MenuNode" parameterType="map">

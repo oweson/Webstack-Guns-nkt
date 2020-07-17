@@ -38,6 +38,10 @@ public class CategoryServiceImpl extends BaseService<Category> {
 
     public static Pager<Category> pager = null;
 
+    public  List<Category> getListByParentId(Integer id){
+        return categoryMapper.getListByParentId(id);
+    }
+
 //    @Cacheable(key = "'categories-many-'+ #p0")
     public List<Category> getCatogry(Map<String, Object> map) {
         return categoryMapper.getCatogry(map);

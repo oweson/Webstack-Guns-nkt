@@ -5,6 +5,7 @@ import cn.stylefeng.roses.core.base.warpper.BaseControllerWrapper;
 import cn.stylefeng.roses.core.util.ToolUtil;
 import cn.stylefeng.roses.kernel.model.exception.ServiceException;
 
+import com.nikati.manage.modular.system.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -80,6 +81,7 @@ public class CategoryController extends BaseController {
 
     /**
      * 3 跳转到修改分类
+     * ok!
      */
     @RequestMapping("/category_update/{id}")
     public String categoryUpdate(@PathVariable Integer id, Model model) {
@@ -114,6 +116,7 @@ public class CategoryController extends BaseController {
     public Object add(Category category) {
         cacheSame();
         int level = category.getParentId() == 0 ? 0 : categoryService.get(category.getParentId()).getLevels();
+        // level区分一级和二级分类
         category.setLevels(level + 1);
         categoryService.saveOrUpdate(category, "");
         return SUCCESS_TIP;
@@ -131,18 +134,27 @@ public class CategoryController extends BaseController {
             throw new ServiceException(BizExceptionEnum.REQUEST_NULL);
         }
         int level = category.getParentId() == 0 ? 0 : categoryService.get(category.getParentId()).getLevels();
+        // 无限极的分类
         category.setLevels(level + 1);
         categoryService.saveOrUpdate(category, category.getId());
         return SUCCESS_TIP;
     }
 
+
     /**
      * 7 删除分类
+     * todo 问题修复
      */
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam Integer id) {
         cacheSame();
+        int size = categoryService.getListByParentId(id).size();
+        if(size>0){
+            System.out.println(1/0);
+            return "";
+            //return "下级有数据，禁止删除！";
+        }
         categoryService.delete(id);
         return SUCCESS_TIP;
     }

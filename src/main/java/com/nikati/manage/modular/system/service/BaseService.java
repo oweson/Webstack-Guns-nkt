@@ -244,6 +244,22 @@ public class BaseService<T> {
         return count;
     }
 
+    /**
+     * 修改或者保存
+     */
+    public int saveOrUpdate20(T obj, String id) {
+        int count = 0;
+        if (obj == null) {
+            count = -1;
+
+        } else if (StringUtils.isEmpty(id)) {
+            // insert
+        } else {
+            // update
+        }
+        return count;
+    }
+
     public int insert(T obj) {
         return baseDao.insertSelective(obj);
     }
