@@ -91,7 +91,6 @@ public class IndexController extends BaseController {
      */
     @RequestMapping("/")
     public String index(Model model, HttpServletRequest httpServletRequest) {
-        System.out.println();
         countUserDetailMessage(httpServletRequest);
         List<MenuNode> titles = null;
         List<Category> categorySiteList = null;
