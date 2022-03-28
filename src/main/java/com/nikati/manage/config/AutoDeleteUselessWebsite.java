@@ -24,9 +24,7 @@ public class AutoDeleteUselessWebsite {
     @Autowired
     private SiteMapper siteMapper;
 
-   @Scheduled(cron = "0 0/45 * * * ?")
- //   @Scheduled(cron = "0/5 * * * * ?")
-
+  // @Scheduled(cron = "0 0/45 * * * ?")
     public void checkUselessWebSite() {
         List<Site> siteList = new ArrayList<>();
         List<Site> siteMapperList = siteMapper.getList(null);
@@ -45,57 +43,5 @@ public class AutoDeleteUselessWebsite {
 
     }
 
-    //     @Scheduled(cron = "*/5 * * * * ?")
-//    public void monnitor() {
-//         if(flag){
-//             log.info("开始检查是否有不可用的站点------------------------------------------");
-//         }
-//         else{
-//             log.info("检查机制已经关闭！！！");
-//         }
-//
-//    }
-//    @Scheduled(cron = "*/10 * * * * ?")
-//    public void bigDataInsertMysql() {
-//        ExecutorService executorService = Executors.newFixedThreadPool(12);
-//        for (int i = 0; i < 24; i++) {
-//            executorService.submit(()->task());
-//        }
-//
-//    }
-//    private void task(){
-//        ArrayList<Visitor> visitors = Lists.newArrayList(new Visitor());
-//        for (int i = 0; i < 1000; i++) {
-//            Visitor visitor = new Visitor();
-//            visitor.setIp("127.0.0.1");
-//            visitor.setOs("linux");
-//            visitor.setBrowser("google");
-//            visitor.setAddress("上海");
-//            visitor.setCreate_time(new Date());
-//            visitors.add(visitor);
-//            visitorMapper.insertSelective(visitor);
-//        }
-//
-//    }
-//    @Scheduled(cron = "*/15 * * * * ?")
-//    public void bigDataInsertMysql() {
-//        ExecutorService executorService = Executors.newFixedThreadPool(2);
-//        for (int i = 0; i < 3; i++) {
-//            executorService.submit(()->task());
-//        }
-//
-//    }
-//    private void task(){
-//        for (int i = 0; i < 1000; i++) {
-//            Visitor visitor = new Visitor();
-//            visitor.setIp("127.0.0.1");
-//            visitor.setOs("linux");
-//            visitor.setBrowser("google");
-//            visitor.setAddress("上海");
-//            visitor.setCreate_time(new Date());
-//            visitorMapper.insertSelective(visitor);
-//        }
-//
-//    }
 
 }
