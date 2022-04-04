@@ -72,16 +72,15 @@ public class IndexController extends BaseController {
         List<String> osAndBrowserInfo = IpUtils.getOsAndBrowserInfo(request);
         String osName = osAndBrowserInfo.get(0);
         String bronsor = osAndBrowserInfo.get(1);
-        ipAddr = "222.76.8.158";
+        //ipAddr = "222.76.8.158";
         // todo 地址不可用目前
-        //String queryAddress = AddressUtils.queryAddress(ipAddr);
-        System.out.println("");
+        String queryAddress = AddressUtils.queryAddress(ipAddr);
         Visitor visitor = new Visitor();
         visitor.setIp(ipAddr);
         visitor.setOs(osName);
         visitor.setBrowser(bronsor);
-        // visitor.setAddress(queryAddress);
-        visitor.setAddress("上海");
+         visitor.setAddress(queryAddress);
+       // visitor.setAddress("上海");
         visitor.setCreate_time(new Date());
         visitorMapper.insertSelective(visitor);
     }

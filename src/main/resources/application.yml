@@ -1,10 +1,13 @@
 server:
-  port: 1949
+  port: 80
+  ssl:
+    key-store:  giveupfantasy.top.jks
+    key-store-password: handsome1514Cheng
 
 guns:
   swagger-open: true              #是否开启swagger (true/false)
   kaptcha-open: false             #是否开启登录时验证码 (true/false)
-#  file-upload-path: c:/tmp/tmp
+  #  file-upload-path: c:/tmp/tmp
   file-upload-path: /images/web-guide    #文件上传目录(不配置的话为java.io.tmpdir目录)
 
   #文件上传目录(不配置的话为java.io.tmpdir目录)
@@ -44,7 +47,7 @@ spring:
     url: jdbc:mysql://1.14.157.172:3306/webstack?allowMultiQueries=true&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=GMT%2B8
     username: root
     password: oweson20150823
-   # filters: wall,mergeStat
+    # filters: wall,mergeStat
     driver-class-name: com.mysql.cj.jdbc.Driver
   redis:
     database: 1
