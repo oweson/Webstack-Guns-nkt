@@ -15,12 +15,14 @@
  */
 package com.nikati.manage.modular.system.controller;
 
+import java.io.IOException;
 import java.util.Date;
 
 import cn.stylefeng.roses.core.base.controller.BaseController;
 
 import com.nikati.manage.core.util.AddressUtils;
 import com.nikati.manage.core.util.IpUtils;
+import com.nikati.manage.core.util.TencentIpUtils;
 import com.nikati.manage.modular.system.dao.VisitorMapper;
 import com.nikati.manage.modular.system.model.Visitor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,15 +68,13 @@ public class IndexController extends BaseController {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    private void countUserDetailMessage(HttpServletRequest request) {
+    private void countUserDetailMessage(HttpServletRequest request) throws IOException {
         int serverPort = request.getServerPort();
         String ipAddr = IpUtils.getIpAddr(request);
         List<String> osAndBrowserInfo = IpUtils.getOsAndBrowserInfo(request);
         String osName = osAndBrowserInfo.get(0);
         String bronsor = osAndBrowserInfo.get(1);
-        //ipAddr = "222.76.8.158";
-        // todo 地址不可用目前
-        String queryAddress = AddressUtils.queryAddress(ipAddr);
+        String queryAddress = TencentIpUtils.getAddresses(ipAddr);
         Visitor visitor = new Visitor();
         visitor.setIp(ipAddr);
         visitor.setOs(osName);
@@ -89,7 +89,7 @@ public class IndexController extends BaseController {
      * 1 跳转到首页
      */
     @RequestMapping("/")
-    public String index(Model model, HttpServletRequest httpServletRequest) {
+    public String index(Model model, HttpServletRequest httpServletRequest) throws IOException {
         countUserDetailMessage(httpServletRequest);
         List<MenuNode> titles = null;
         List<Category> categorySiteList = null;
