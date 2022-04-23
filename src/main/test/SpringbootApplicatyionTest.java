@@ -1,7 +1,11 @@
+import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Lists;
 import com.nikati.manage.WebstackGunsApplication;
 import com.nikati.manage.modular.system.dao.VisitorMapper;
 import com.nikati.manage.modular.system.model.Visitor;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,9 +24,32 @@ public class SpringbootApplicatyionTest {
     @Autowired
     private VisitorMapper visitorMapper;
 
+
+
+@Test
+
+    public  void httpGet(final String url, final Callback callback) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Request request = new Request.Builder().url(url).build(); //添加头部信息
+                okHttpClient.newCall(request).enqueue(callback);
+            }
+        }).start();
+    }
+
     @Test
     public void getOne(){
+        OkHttpClient okHttpClient = new OkHttpClient();
+        OkHttpClient build = okHttpClient.newBuilder().build();
         System.out.println(visitorMapper.selectByPrimaryKey(1));
+    }
+
+
+    @Test
+    public void ip(){
+
     }
 
     @Test
