@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -67,8 +68,8 @@ public class IndexController extends BaseController {
 
     @Autowired
     private RedisTemplate redisTemplate;
-
-    private void countUserDetailMessage(HttpServletRequest request) throws IOException {
+    @Async
+    public void countUserDetailMessage(HttpServletRequest request) throws IOException {
         int serverPort = request.getServerPort();
         String ipAddr = IpUtils.getIpAddr(request);
         List<String> osAndBrowserInfo = IpUtils.getOsAndBrowserInfo(request);
@@ -90,6 +91,7 @@ public class IndexController extends BaseController {
      */
     @RequestMapping("/")
     public String index(Model model, HttpServletRequest httpServletRequest) throws IOException {
+        // 记录日志
         countUserDetailMessage(httpServletRequest);
         List<MenuNode> titles = null;
         List<Category> categorySiteList = null;
