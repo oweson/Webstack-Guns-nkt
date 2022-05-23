@@ -81,7 +81,6 @@ public class IndexController extends BaseController {
         visitor.setOs(osName);
         visitor.setBrowser(bronsor);
          visitor.setAddress(queryAddress);
-       // visitor.setAddress("上海");
         visitor.setCreate_time(new Date());
         visitorMapper.insertSelective(visitor);
     }
@@ -99,7 +98,6 @@ public class IndexController extends BaseController {
         categorySiteList = redisTemplate.opsForList().range(CACHE_INDEX_TITLES, 0, -1);
         if (CollectionUtils.isEmpty(titles) || CollectionUtils.isEmpty(categorySiteList)) {
             List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
-
             titles = MenuNode.buildTitle(menus);
             redisTemplate.opsForList().rightPushAll(CACHE_CATEGORY, titles);
             // 处理分类目录

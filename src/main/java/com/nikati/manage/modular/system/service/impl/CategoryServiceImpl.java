@@ -16,10 +16,7 @@ import com.nikati.manage.modular.system.model.Category;
 import com.nikati.manage.modular.system.model.Site;
 import com.nikati.manage.modular.system.service.BaseService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author jsnjfz
@@ -62,10 +59,9 @@ public class CategoryServiceImpl extends BaseService<Category> {
         for (Category category : categoryList) {
             List<Site> sites = new ArrayList<>();
             for (Site site : siteList) {
-                if (site.getCategoryId() == category.getId()) {
+                if (Objects.equals(site.getCategoryId(),  category.getId()) ) {
                     sites.add(site);
                 }
-
             }
             category.setSites(sites);
         }
