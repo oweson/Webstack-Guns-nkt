@@ -42,6 +42,7 @@ import com.nikati.manage.modular.system.model.Category;
 import com.nikati.manage.modular.system.service.IOperationLogService;
 import com.nikati.manage.modular.system.service.impl.CategoryServiceImpl;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class IndexController extends BaseController {
     // 2 分类
     public static final String CACHE_CATEGORY = "index_categorys";
 
-    @Autowired
+    @Resource
     private VisitorMapper visitorMapper;
 
     @Autowired
@@ -68,8 +69,8 @@ public class IndexController extends BaseController {
 
     @Autowired
     private RedisTemplate redisTemplate;
-    @Async
-    public void countUserDetailMessage(HttpServletRequest request) throws IOException {
+    //@Async
+    public Boolean countUserDetailMessage(HttpServletRequest request) throws IOException {
         int serverPort = request.getServerPort();
         String ipAddr = IpUtils.getIpAddr(request);
         List<String> osAndBrowserInfo = IpUtils.getOsAndBrowserInfo(request);
@@ -83,6 +84,7 @@ public class IndexController extends BaseController {
          visitor.setAddress(queryAddress);
         visitor.setCreate_time(new Date());
         visitorMapper.insertSelective(visitor);
+        return (osName != null && osName.contains("python")) || osName.contains("UnKnown") || osName.contains("Postman");
     }
 
     /**
@@ -90,19 +92,20 @@ public class IndexController extends BaseController {
      */
     @RequestMapping("/")
     public String index(Model model, HttpServletRequest httpServletRequest) throws IOException {
+        List<MenuNode> titles = new ArrayList<>();
+        List<Category> categorySiteList = new ArrayList<>();
         // 记录日志
-        countUserDetailMessage(httpServletRequest);
-        List<MenuNode> titles = null;
-        List<Category> categorySiteList = null;
-        titles = redisTemplate.opsForList().range(CACHE_CATEGORY, 0, -1);
-        categorySiteList = redisTemplate.opsForList().range(CACHE_INDEX_TITLES, 0, -1);
-        if (CollectionUtils.isEmpty(titles) || CollectionUtils.isEmpty(categorySiteList)) {
-            List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
-            titles = MenuNode.buildTitle(menus);
-            redisTemplate.opsForList().rightPushAll(CACHE_CATEGORY, titles);
-            // 处理分类目录
-            categorySiteList = categoryService.getCatogrySite(null);
-            redisTemplate.opsForList().rightPushAll(CACHE_INDEX_TITLES, categorySiteList);
+        if (!countUserDetailMessage(httpServletRequest)) {
+            titles = redisTemplate.opsForList().range(CACHE_CATEGORY, 0, -1);
+            categorySiteList = redisTemplate.opsForList().range(CACHE_INDEX_TITLES, 0, -1);
+            if (CollectionUtils.isEmpty(titles) || CollectionUtils.isEmpty(categorySiteList)) {
+                List<MenuNode> menus = categoryService.getCatogryNode(new HashMap<>());
+                titles = MenuNode.buildTitle(menus);
+                redisTemplate.opsForList().rightPushAll(CACHE_CATEGORY, titles);
+                // 处理分类目录
+                categorySiteList = categoryService.getCatogrySite(null);
+                redisTemplate.opsForList().rightPushAll(CACHE_INDEX_TITLES, categorySiteList);
+            }
         }
         model.addAttribute("categorySiteList", categorySiteList);
         model.addAttribute("titles", titles);
