@@ -5,11 +5,14 @@ import cn.stylefeng.roses.core.base.warpper.BaseControllerWrapper;
 import cn.stylefeng.roses.core.util.ToolUtil;
 import cn.stylefeng.roses.kernel.model.exception.ServiceException;
 
+import com.nikati.manage.modular.system.dao.SiteMapper;
 import com.nikati.manage.modular.system.service.CategoryService;
+import com.nikati.manage.modular.system.service.impl.SiteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +24,7 @@ import com.nikati.manage.core.common.node.ZTreeNode;
 import com.nikati.manage.modular.system.model.Category;
 import com.nikati.manage.modular.system.service.impl.CategoryServiceImpl;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Controller
 @RequestMapping("category")
+@Transactional(rollbackFor = Exception.class)
 public class CategoryController extends BaseController {
     // 1 标题
     public static final String CACHE_INDEX_TITLES = "index_titles";
@@ -45,6 +50,9 @@ public class CategoryController extends BaseController {
 
     @Autowired
     private CategoryServiceImpl categoryService;
+
+    @Resource
+    private SiteMapper siteMapper;
 
     /**
      * 0 跳转到菜单列表列表页面
@@ -143,19 +151,16 @@ public class CategoryController extends BaseController {
 
     /**
      * 7 删除分类
-     * todo 问题修复
      */
     @RequestMapping(value = "/delete")
     @ResponseBody
     public Object delete(@RequestParam Integer id) {
         cacheSame();
-        int size = categoryService.getListByParentId(id).size();
-        if(size>0){
-            System.out.println(1/0);
-            return "";
-            //return "下级有数据，禁止删除！";
-        }
         categoryService.delete(id);
+
+        siteMapper.delete(id);
+
+
         return SUCCESS_TIP;
     }
 

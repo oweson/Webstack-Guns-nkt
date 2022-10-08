@@ -45,6 +45,10 @@
 		delete from site where id = #{id}
 	</delete>
 
+    <delete id="delete" parameterType="java.lang.Integer">
+		delete from site where category_id = #{id}
+	</delete>
+
 
     <insert id="insertSelective" parameterType="com.nikati.manage.modular.system.model.Site" useGeneratedKeys="true"
             keyProperty="id">

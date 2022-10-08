@@ -8,4 +8,7 @@ public interface SiteMapper extends BaseDao<Site> {
 
     void batchUpdate(List<Integer> ids);
 
+
+    int delete(Integer id);
+
 }

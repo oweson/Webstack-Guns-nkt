@@ -13,7 +13,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *@Title WebstackGunsApplication.java
  *@description SpringBoot方式启动类
  *@time 2019年12月22日 下午8:47:10
- *@author Nikati
  *@version 1.0
 *
  */
