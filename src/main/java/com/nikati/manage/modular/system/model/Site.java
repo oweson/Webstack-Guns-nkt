@@ -3,7 +3,6 @@ package com.nikati.manage.modular.system.model;
 import lombok.Data;
 
 /**
- * @Author jsnjfz
  * @Date 2019/7/21 14:44
  * 网站表
  */
@@ -27,4 +26,6 @@ public class Site {
     private String createTime;
 
     private String updateTime;
+
+    private Integer failNum;
 }

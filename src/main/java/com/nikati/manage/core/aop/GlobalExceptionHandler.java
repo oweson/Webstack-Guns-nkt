@@ -136,4 +136,13 @@ public class GlobalExceptionHandler {
         log.error("运行时异常:", e);
         return new ErrorResponseData(BizExceptionEnum.SERVER_ERROR.getCode(), BizExceptionEnum.SERVER_ERROR.getMessage());
     }
+
+
+    @ExceptionHandler(com.nikati.manage.core.common.exception.ServiceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String visitorTooFastException(Model model,com.nikati.manage.core.common.exception.ServiceException e) {
+        getRequest().setAttribute("tip", "服务器未知运行时异常");
+        log.error("访问频繁异常:", e);
+        model.addAttribute("tips", "访问太快啦");
+        return "/400.html";    }
 }

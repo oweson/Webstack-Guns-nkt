@@ -20,6 +20,7 @@ import java.util.Date;
 
 import cn.stylefeng.roses.core.base.controller.BaseController;
 
+import com.nikati.manage.core.common.annotion.RateLimiter;
 import com.nikati.manage.core.util.AddressUtils;
 import com.nikati.manage.core.util.IpUtils;
 import com.nikati.manage.core.util.TencentIpUtils;
@@ -91,6 +92,7 @@ public class IndexController extends BaseController {
      * 1 跳转到首页
      */
     @RequestMapping("/")
+    @RateLimiter
     public String index(Model model, HttpServletRequest httpServletRequest) throws IOException {
         List<MenuNode> titles = new ArrayList<>();
         List<Category> categorySiteList = new ArrayList<>();
