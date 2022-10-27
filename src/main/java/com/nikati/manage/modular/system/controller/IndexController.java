@@ -16,8 +16,9 @@
 package com.nikati.manage.modular.system.controller;
 
 import java.io.IOException;
-import java.util.Date;
+import java.util.*;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.stylefeng.roses.core.base.controller.BaseController;
 
 import com.nikati.manage.core.common.annotion.RateLimiter;
@@ -45,9 +46,6 @@ import com.nikati.manage.modular.system.service.impl.CategoryServiceImpl;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @Author jsnjfz
@@ -109,6 +107,9 @@ public class IndexController extends BaseController {
                 redisTemplate.opsForList().rightPushAll(CACHE_INDEX_TITLES, categorySiteList);
             }
         }
+
+        Object obj = redisTemplate.opsForValue().get(""+RandomUtil.randomInt(250));
+        Object str = Objects.nonNull(obj) ? model.addAttribute("str",  obj) : "";
         model.addAttribute("categorySiteList", categorySiteList);
         model.addAttribute("titles", titles);
         return "/index.html";
