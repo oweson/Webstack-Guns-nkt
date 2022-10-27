@@ -68,6 +68,7 @@ public class IndexController extends BaseController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
     //@Async
     public Boolean countUserDetailMessage(HttpServletRequest request) throws IOException {
         int serverPort = request.getServerPort();
@@ -80,7 +81,7 @@ public class IndexController extends BaseController {
         visitor.setIp(ipAddr);
         visitor.setOs(osName);
         visitor.setBrowser(bronsor);
-         visitor.setAddress(queryAddress);
+        visitor.setAddress(queryAddress);
         visitor.setCreate_time(new Date());
         visitorMapper.insertSelective(visitor);
         return (osName != null && osName.contains("python")) || osName.contains("UnKnown") || osName.contains("Postman");
@@ -108,8 +109,8 @@ public class IndexController extends BaseController {
             }
         }
 
-        Object obj = redisTemplate.opsForValue().get(""+RandomUtil.randomInt(250));
-        Object str = Objects.nonNull(obj) ? model.addAttribute("str",  obj) : "";
+        Object obj = redisTemplate.opsForValue().get("" + RandomUtil.randomInt(250));
+        model.addAttribute("str", Objects.nonNull(obj) ? obj : "");
         model.addAttribute("categorySiteList", categorySiteList);
         model.addAttribute("titles", titles);
         return "/index.html";
