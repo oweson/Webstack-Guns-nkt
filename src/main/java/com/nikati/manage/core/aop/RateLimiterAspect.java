@@ -1,3 +1,4 @@
+/*
 package com.nikati.manage.core.aop;
 import com.nikati.manage.core.common.annotion.RateLimiter;
 import com.nikati.manage.core.common.constant.LimitType;
@@ -14,11 +15,13 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
+*/
 /**
  * 限流处理
  *
  * @author cwl
- */
+ *//*
+
 @Slf4j
 @Aspect
 @Component
@@ -62,3 +65,4 @@ public class RateLimiterAspect {
         return stringBuffer.toString();
     }
 }
+*/
