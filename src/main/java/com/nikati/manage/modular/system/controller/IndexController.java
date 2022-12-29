@@ -109,7 +109,11 @@ public class IndexController extends BaseController {
             }
         }
 
-        Object obj = redisTemplate.opsForValue().get("" + RandomUtil.randomInt(250));
+        Object obj = redisTemplate.opsForValue().get("" + RandomUtil.randomInt(1250));
+        while(Objects.isNull(obj)){
+            obj = redisTemplate.opsForValue().get("" + RandomUtil.randomInt(1250));
+
+        }
         model.addAttribute("str", Objects.nonNull(obj) ? obj : "");
         model.addAttribute("categorySiteList", categorySiteList);
         model.addAttribute("titles", titles);
